@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clothing Grocery List PRO</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background: #1a1a1a; color: #eee; display: flex; justify-content: center; padding: 40px 20px; }
+        .card { background: #2a2a2a; padding: 2rem; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); width: 100%; max-width: 450px; border: 1px solid #333; }
+        h2 { margin-top: 0; color: #fff; letter-spacing: -0.5px; }
+        input { padding: 12px; border: 1px solid #444; border-radius: 8px; background: #333; color: white; margin-bottom: 10px; width: -webkit-fill-available; }
+        button { padding: 12px; background: #007bff; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.2s; }
+        button:hover { background: #0056b3; }
+        .download-btn { background: #28a745; margin-top: 20px; width: 100%; }
+        .download-btn:hover { background: #218838; }
+        ul { list-style: none; padding: 0; margin-top: 20px; }
+        li { background: #333; padding: 12px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #007bff; }
+        .vibe-tag { font-size: 0.75rem; color: #aaa; text-transform: uppercase; letter-spacing: 2px; display: block; margin-bottom: 5px; }
+        .delete-ico { color: #ff4d4d; cursor: pointer; font-weight: bold; padding: 0 5px; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <div id="setup">
+        <h2>Style Setup</h2>
+        <input type="text" id="userName" placeholder="Enter Your Name">
+        <input type="text" id="userVibe" placeholder="Vibe (e.g. 90s Streetwear)">
+        <button onclick="startList()" style="width: 100%;">Create My List</button>
+    </div>
+
+    <div id="listContainer" style="display: none;">
+        <span class="vibe-tag" id="displayVibe"></span>
+        <h2 id="displayName" style="margin-bottom: 20px;"></h2>
+        
+        <div style="display: flex; gap: 8px;">
+            <input type="text" id="itemInput" placeholder="Type clothing item..." style="margin-bottom: 0;">
+            <button onclick="addItem()">Add</button>
+        </div>
+
+        <ul id="clothingList"></ul>
+
+        <button class="download-btn" onclick="downloadPDF()">Download as PDF</button>
+    </div>
+</div>
+
+<script>
+    let itemsArray = [];
+
+    function startList() {
+        const name = document.getElementById('userName').value;
+        const vibe = document.getElementById('userVibe').value;
+        if (!name) return alert("Please enter your name to begin.");
+
+        document.getElementById('setup').style.display = 'none';
+        document.getElementById('listContainer').style.display = 'block';
+        document.getElementById('displayName').innerText = `${name}'s Grocery List`;
+        document.getElementById('displayVibe').innerText = vibe || 'General Style';
+    }
+
+    function addItem() {
+        const input = document.getElementById('itemInput');
+        if (!input.value) return;
+
+        itemsArray.push(input.value);
+        renderList();
+        input.value = '';
+    }
+
+    function renderList() {
+        const listEl = document.getElementById('clothingList');
+        listEl.innerHTML = '';
+        itemsArray.forEach((item, index) => {
+            const li = document.createElement('li');
+            li.innerHTML = `<span>${item}</span> <span class="delete-ico" onclick="removeItem(${index})">✕</span>`;
+            listEl.appendChild(li);
+        });
+    }
+
+    function removeItem(index) {
+        itemsArray.splice(index, 1);
+        renderList();
+    }
+
+    async function downloadPDF() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        const name = document.getElementById('userName').value;
+        const vibe = document.getElementById('userVibe').value;
+
+        doc.setFontSize(22);
+        doc.text(`${name.toUpperCase()}'S CLOTHING LIST`, 20, 20);
+        
+        doc.setFontSize(12);
+        doc.setTextColor(100);
+        doc.text(`Vibe: ${vibe || 'Not Specified'}`, 20, 30);
+        
+        doc.setLineWidth(0.5);
+        doc.line(20, 35, 190, 35);
+
+        doc.setFontSize(14);
+        doc.setTextColor(0);
+        itemsArray.forEach((item, i) => {
+            doc.text(`[ ] ${item}`, 20, 45 + (i * 10));
+        });
+
+        doc.save(`${name}_Clothing_List.pdf`);
+    }
+</script>
+
+</body>
+</html>

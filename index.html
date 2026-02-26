@@ -3,45 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clothing Grocery List PRO</title>
+    <title>Clothing Grocery List</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
-        body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background: #1a1a1a; color: #eee; display: flex; justify-content: center; padding: 40px 20px; }
-        .card { background: #2a2a2a; padding: 2rem; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); width: 100%; max-width: 450px; border: 1px solid #333; }
-        h2 { margin-top: 0; color: #fff; letter-spacing: -0.5px; }
-        input { padding: 12px; border: 1px solid #444; border-radius: 8px; background: #333; color: white; margin-bottom: 10px; width: -webkit-fill-available; }
-        button { padding: 12px; background: #007bff; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.2s; }
-        button:hover { background: #0056b3; }
-        .download-btn { background: #28a745; margin-top: 20px; width: 100%; }
+        body { 
+            font-family: 'Inter', -apple-system, sans-serif; 
+            background: #121212; 
+            color: #ffffff; 
+            display: flex; 
+            justify-content: center; 
+            padding: 40px 20px;
+            margin: 0;
+        }
+        .card { 
+            background: #1e1e1e; 
+            padding: 2rem; 
+            border-radius: 20px; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.6); 
+            width: 100%; 
+            max-width: 450px; 
+            border: 1px solid #333; 
+        }
+        .header-img {
+            width: 100%;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #444;
+            display: block;
+        }
+        h2 { margin: 10px 0; font-weight: 700; }
+        input { 
+            padding: 14px; 
+            border: 1px solid #333; 
+            border-radius: 10px; 
+            background: #2a2a2a; 
+            color: white; 
+            margin-bottom: 12px; 
+            width: -webkit-fill-available;
+            font-size: 1rem;
+        }
+        button { 
+            padding: 14px; 
+            background: #007bff; 
+            color: white; 
+            border: none; 
+            border-radius: 10px; 
+            cursor: pointer; 
+            font-weight: 600; 
+            transition: 0.3s;
+            width: 100%;
+        }
+        button:hover { background: #0056b3; transform: translateY(-1px); }
+        .add-btn { width: 80px; }
+        .download-btn { background: #28a745; margin-top: 25px; }
         .download-btn:hover { background: #218838; }
         ul { list-style: none; padding: 0; margin-top: 20px; }
-        li { background: #333; padding: 12px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #007bff; }
-        .vibe-tag { font-size: 0.75rem; color: #aaa; text-transform: uppercase; letter-spacing: 2px; display: block; margin-bottom: 5px; }
-        .delete-ico { color: #ff4d4d; cursor: pointer; font-weight: bold; padding: 0 5px; }
+        li { 
+            background: #2a2a2a; 
+            padding: 14px; 
+            border-radius: 10px; 
+            margin-bottom: 10px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-left: 5px solid #007bff;
+        }
+        .vibe-tag { 
+            font-size: 0.7rem; 
+            color: #007bff; 
+            text-transform: uppercase; 
+            letter-spacing: 2px; 
+            font-weight: bold;
+        }
+        .delete-ico { color: #ff4d4d; cursor: pointer; font-size: 1.2rem; padding-left: 10px; }
     </style>
 </head>
 <body>
 
 <div class="card">
+    <img src="https://github.com/user-attachments/assets/c1be19f8-7a7a-40af-90a8-979db95b4ecb" alt="Camp Vibe" class="header-img">
+
     <div id="setup">
         <h2>Style Setup</h2>
-        <input type="text" id="userName" placeholder="Enter Your Name">
-        <input type="text" id="userVibe" placeholder="Vibe (e.g. 90s Streetwear)">
-        <button onclick="startList()" style="width: 100%;">Create My List</button>
+        <input type="text" id="userName" placeholder="Your Name">
+        <input type="text" id="userVibe" placeholder="The Vibe (e.g. Clean Camp)">
+        <button onclick="startList()">Create My List</button>
     </div>
 
     <div id="listContainer" style="display: none;">
         <span class="vibe-tag" id="displayVibe"></span>
-        <h2 id="displayName" style="margin-bottom: 20px;"></h2>
+        <h2 id="displayName"></h2>
         
-        <div style="display: flex; gap: 8px;">
-            <input type="text" id="itemInput" placeholder="Type clothing item..." style="margin-bottom: 0;">
-            <button onclick="addItem()">Add</button>
+        <div style="display: flex; gap: 10px;">
+            <input type="text" id="itemInput" placeholder="Add clothing item..." style="margin-bottom: 0;">
+            <button class="add-btn" onclick="addItem()">Add</button>
         </div>
 
         <ul id="clothingList"></ul>
 
-        <button class="download-btn" onclick="downloadPDF()">Download as PDF</button>
+        <button class="download-btn" onclick="downloadPDF()">Download PDF</button>
     </div>
 </div>
 
@@ -51,12 +111,12 @@
     function startList() {
         const name = document.getElementById('userName').value;
         const vibe = document.getElementById('userVibe').value;
-        if (!name) return alert("Please enter your name to begin.");
+        if (!name) return alert("Please enter your name!");
 
         document.getElementById('setup').style.display = 'none';
         document.getElementById('listContainer').style.display = 'block';
-        document.getElementById('displayName').innerText = `${name}'s Grocery List`;
-        document.getElementById('displayVibe').innerText = vibe || 'General Style';
+        document.getElementById('displayName').innerText = `${name}'s List`;
+        document.getElementById('displayVibe').innerText = vibe || 'Fresh Vibe';
     }
 
     function addItem() {
@@ -73,7 +133,7 @@
         listEl.innerHTML = '';
         itemsArray.forEach((item, index) => {
             const li = document.createElement('li');
-            li.innerHTML = `<span>${item}</span> <span class="delete-ico" onclick="removeItem(${index})">✕</span>`;
+            li.innerHTML = `<span>[ ] ${item}</span> <span class="delete-ico" onclick="removeItem(${index})">✕</span>`;
             listEl.appendChild(li);
         });
     }
@@ -89,20 +149,23 @@
         const name = document.getElementById('userName').value;
         const vibe = document.getElementById('userVibe').value;
 
+        // PDF Styling
+        doc.setFont("helvetica", "bold");
         doc.setFontSize(22);
-        doc.text(`${name.toUpperCase()}'S CLOTHING LIST`, 20, 20);
+        doc.text(`${name.toUpperCase()}'S CLOTHING LIST`, 20, 25);
         
         doc.setFontSize(12);
+        doc.setFont("helvetica", "normal");
         doc.setTextColor(100);
-        doc.text(`Vibe: ${vibe || 'Not Specified'}`, 20, 30);
+        doc.text(`Vibe: ${vibe || 'Clean & Organized'}`, 20, 35);
         
-        doc.setLineWidth(0.5);
-        doc.line(20, 35, 190, 35);
+        doc.setDrawColor(200);
+        doc.line(20, 40, 190, 40);
 
         doc.setFontSize(14);
-        doc.setTextColor(0);
+        doc.setTextColor(40);
         itemsArray.forEach((item, i) => {
-            doc.text(`[ ] ${item}`, 20, 45 + (i * 10));
+            doc.text(`${i + 1}. [ ] ${item}`, 20, 55 + (i * 12));
         });
 
         doc.save(`${name}_Clothing_List.pdf`);
